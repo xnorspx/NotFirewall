@@ -1,7 +1,8 @@
 # Tailscale
-Interface: tailscale0
+# Interface: tailscale0
 # Proxmox
-TCP-8006: 192.168.1.0/24
-TCP-8007: 192.168.1.0/24
+# TCP-8006: 192.168.1.0/24
+# TCP-8007: 192.168.1.0/24
 # Netdata
-TCP-19999: 192.168.1.0/24
+# TCP-19999: 192.168.1.0/24
+TCP-22: 192.168.1.0/24

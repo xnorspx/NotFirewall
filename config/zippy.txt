@@ -2,3 +2,7 @@
 Interface: tailscale0
 # Netdata
 TCP-19999: 192.168.1.0/24
+# Portainer
+TCP-9443: 192.168.1.0/24
+# DDNS-GO
+TCP-9876: 192.168.1.0/24

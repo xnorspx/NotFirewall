@@ -5,107 +5,106 @@ import os
 """
 Config
 """
-rule_url = "https://raw.githubusercontent.com/tszykl05/NotFirewall/main/config/vm.txt"
-comment_keyword = "NotFirewall"
+ufw_rule_url = "https://raw.githubusercontent.com/tszykl05/NotFirewall/main/config/vm.txt"
+ufw_rule_comment_keyword = "NotFirewall"
 
 """
-Security check before running script
+Security checks
 """
-self_stat = os.stat(__file__)
-self_permission = oct(self_stat.st_mode)[-3:]
-self_owner = self_stat.st_uid
-ufw_status = subprocess.run(
-    [
-        "ufw",
-        "status"
-    ],
-    capture_output=True
-)
-if self_permission != "644":
-    print("File permission is not set to 644. Leaving.")
+script_stat = os.stat(__file__)
+script_permission = oct(script_stat.st_mode)[-3:]
+script_owner = script_stat.st_uid
+if script_permission != "644":
+    print("Script permission is not set to 644. Leaving.")
     exit(1)
-elif self_owner != 0:
-    print("File is not own by root. Leaving.")
+elif script_owner != 0:
+    print("Script is not own by root. Leaving.")
     exit(1)
-elif "inactive" in ufw_status.stdout.decode("utf-8"):
-    print("UFW disabled. Leaving.")
-    exit(1)
-
-"""
-Grab rule
-"""
-rule_txt = requests.get(rule_url, timeout=(5, 15), allow_redirects=True).text
 
 """
 Parse rule
 """
-rule_list_raw = rule_txt.split("\n")
-rule_list = []
-for item in rule_list_raw:
-    if (":" in item) and (item[0] != "#"):
+ufw_rules_raw = requests.get(ufw_rule_url, timeout=(5, 15), allow_redirects=True).text
+
+"""
+Parse rule
+"""
+ufw_rule = []
+ufw_rule_lines = ufw_rules_raw.split("\n")
+for item in ufw_rule_lines:
+    if (item[0] != "#") and (":" in item):
+        # Change ":" that may exist in IPv6 addresses into "|"
         item = item.replace(":", "|", 1)
         item = item.split("|")
-        if "-" in item[0]:  # Protocol-Port
+        if "-" in item[0]:
+            # Protocol-Port part
             proto, port = item.pop(0).split("-")
             network_list = [x.strip() for x in item]
+            # Add rules into list
             for network in network_list:
-                rule_list.append(
-                    (proto.lower(), port, network)
+                ufw_rule.append(
+                    (proto.lower(), port, network)  # Lower case the protocol to match ufw status expression
                 )
-        elif item[0] == "Interface":  # Interface
-            rule_list.append(
+        elif item[0] == "Interface":
+            # Interface
+            ufw_rule.append(
                 ("Interface", item[1].strip())
             )
-print(rule_list)
+# Log
+print("Applying following rules")
+for i in ufw_rule:
+    print(i)
 
 """
 Fetch current UFW rules
 """
-current_ufw_rules = []
-ufw_status_output = ufw_status.stdout.decode("utf-8").split("\n")
-controlled_rules = [x.replace("ALLOW", "#") for x in ufw_status_output if comment_keyword in x]
-for rule in controlled_rules:
-    rule = rule.split("#")
-    target = rule[0].strip().replace(" (v6)", "")
-    source = rule[1].strip()
+ufw_status = []
+# Get ufw status
+ufw_status_raw = subprocess.run(["ufw", "status"], capture_output=True).stdout.decode("utf-8")
+ufw_status_raw = ufw_status_raw.split("\n")
+# Filter the related rules
+ufw_status_raw = [x for x in ufw_status_raw if ufw_rule_comment_keyword in x]
+ufw_status_raw = [x.replace("ALLOW", "#") for x in ufw_status_raw]
+for item in ufw_status_raw:
+    item = item.split("#")
+    # Rule details
+    target = item[0].strip().replace(" (v6)", "")  # Ignore the IPv6 tag
+    source = item[1].strip()
     # Change expression
     if source == "Anywhere":
         source = "0.0.0.0/0"
     elif source == "Anywhere (v6)":
         source = "::/0"
-    # Add to current rule list for matching
-    if "Anywhere on" in target:
-        # Interface rule
-        interface = target.replace("Anywhere (v6) on ", "").replace("Anywhere on ", "")
+    # Parse rules
+    if "Anywhere on" in target:  # Indicate as Interface rules
+        interface = target.replace("Anywhere on ", "")
         # Add rules
-        current_ufw_rules.append(
+        ufw_status.append(
             ("Interface", interface)
         )
     else:
-        # Port rule
         port, proto = target.split("/")
         # Add rules
-        current_ufw_rules.append(
+        ufw_status.append(
             (proto, port, source)
         )
 
 """
 Remove redundant
 """
-existing_rules = list(dict.fromkeys(current_ufw_rules))
-new_rules = list(dict.fromkeys(rule_list))
-pending_delete_rules = []
-while existing_rules:
-    rule = existing_rules.pop(0)
-    if rule in new_rules:
-        new_rules.remove(rule)
+old = list(dict.fromkeys(ufw_status))
+new = list(dict.fromkeys(ufw_rule))
+for i in range(len(old)):
+    item = old.pop(0)
+    if item in new:
+        new.remove(item)
     else:
-        pending_delete_rules.append(rule)
+        old.append(item)
 
 """
-Delete rules
+Delete old rules
 """
-for deleted_item in pending_delete_rules:
+for deleted_item in old:
     if deleted_item[0] == "Interface":
         subprocess.run(
             [
@@ -116,7 +115,7 @@ for deleted_item in pending_delete_rules:
                 "on",
                 deleted_item[1],
                 "comment",
-                comment_keyword
+                ufw_rule_comment_keyword
             ],
             capture_output=True
         )
@@ -135,7 +134,7 @@ for deleted_item in pending_delete_rules:
                 "port",
                 deleted_item[1],
                 "comment",
-                comment_keyword
+                ufw_rule_comment_keyword
             ],
             capture_output=True
         )
@@ -143,7 +142,7 @@ for deleted_item in pending_delete_rules:
 """
 Add new rules
 """
-for new_item in new_rules:
+for new_item in new:
     if new_item[0] == "Interface":
         subprocess.run(
             [
@@ -153,7 +152,7 @@ for new_item in new_rules:
                 "on",
                 new_item[1],
                 "comment",
-                comment_keyword
+                ufw_rule_comment_keyword
             ],
             capture_output=True
         )
@@ -171,7 +170,7 @@ for new_item in new_rules:
                 "port",
                 new_item[1],
                 "comment",
-                comment_keyword
+                ufw_rule_comment_keyword
             ],
             capture_output=True
         )

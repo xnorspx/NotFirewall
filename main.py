@@ -39,7 +39,7 @@ for item in ufw_rule_lines:
         if "-" in item[0]:
             # Protocol-Port part
             proto, port = item.pop(0).split("-")
-            network_list = [x.strip() for x in item]
+            network_list = [x.strip() for x in item[0].split(',')]
             # Add rules into list
             for network in network_list:
                 ufw_rule.append(

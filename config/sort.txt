@@ -1,5 +1,0 @@
-# Tailscale
-Interface: tailscale0
-# HTTP(S) - Public access
-TCP-80: 0.0.0.0/0
-TCP-443: 0.0.0.0/0

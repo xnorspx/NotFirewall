@@ -32,7 +32,9 @@ Parse rule
 ufw_rule = []
 ufw_rule_lines = ufw_rules_raw.split("\n")
 for item in ufw_rule_lines:
-    if (item[0] != "#") and (":" in item):
+    if len(item) == 0:
+        pass
+    elif (item[0] != "#") and (":" in item):
         # Change ":" that may exist in IPv6 addresses into "|"
         item = item.replace(":", "|", 1)
         item = item.split("|")

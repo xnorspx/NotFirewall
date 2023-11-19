@@ -2,8 +2,6 @@
 Interface: tailscale0
 # Adguard Home
 UDP-53: 192.168.1.0/24
-# SMB
-TCP-445: 192.168.1.0/24
 # Proxmox
 TCP-8006: 192.168.1.0/24
 TCP-8007: 192.168.1.0/24

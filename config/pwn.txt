@@ -3,6 +3,8 @@ Interface: tailscale0
 # HTTP(s)
 TCP-80: 0.0.0.0/0
 TCP-443: 0.0.0.0/0
+# Plex
+TCP-32400: 0.0.0.0/0
 # MySQL(Docker)
 TCP-3306: 192.168.0.0/24
 # Redis(Docker)

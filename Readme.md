@@ -17,7 +17,7 @@ git clone https://github.com/tszykl05/NotFirewall.git /root/NotFirewall
 ```
 3. Install dependent package.
 ```bash
-cd /root/Notfirewall
+cd /root/NotFirewall
 pip3 install -r requirements.txt
 ```
 4. Ensures `main.py` is owned by `root` and not editable by other users.

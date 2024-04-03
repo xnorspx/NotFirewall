@@ -9,21 +9,23 @@ Fetch UFW rules from the url that you assigned and apply it. It won't interfere 
 1. Ensures `git`, `python3`, `crontab`, and `ufw` is installed on your machine.
 ```bash
 # For debian stream
-apt install python3-pip git ufw
+apt install python3-pip python3-venv git ufw
 ```
 2. Clone this repo to your `root` account's home directory.
 ```bash
 git clone https://github.com/tszykl05/NotFirewall.git /root/NotFirewall
 ```
-3. Install dependent package.
+3. Create venv and install dependent package.
 ```bash
 cd /root/NotFirewall
+python3 -m venv venv
+source venv/bin/activate
 pip3 install -r requirements.txt
 ```
 4. Ensures `main.py` is owned by `root` and not editable by other users.
 ```bash
-chmod 644 /root/NotFirewall/main.py
-chown root:root /root/NotFirewall/main.py
+chmod 644 -R /root/NotFirewall/main.py
+chown root:root -R /root/NotFirewall/main.py
 ```
 5. Change the `ufw_rule_url` in `main.py` to your rule's url.
 6. Add `python3 /root/NotFirewall/main.py` to your crontab with execution frequency you like.

@@ -35,6 +35,7 @@ for item in ufw_rule_lines:
     if len(item) == 0:
         pass
     elif (item[0] != "#") and (":" in item):
+        """Example config: TCP-80: 2400:cb00::/32, 2606:4700::/32"""
         # Change ":" that may exist in IPv6 addresses into "|"
         item = item.replace(":", "|", 1)
         item = item.split("|")

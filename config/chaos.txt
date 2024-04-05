@@ -1,0 +1,2 @@
+# Tailscale
+Interface: tailscale0

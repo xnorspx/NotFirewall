@@ -55,3 +55,10 @@ TCP-8007: 192.168.1.0/24
 # Netdata
 TCP-19999: 192.168.1.0/24
 ```
+
+## Crontab
+I personally use crontab to run the script periodically.
+```
+# NotFirewall
+*/5 * * * * source /root/NotFirewall/venv/bin/activate && python3 /root/NotFirewall/main.py > /dev/null
+```

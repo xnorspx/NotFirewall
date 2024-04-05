@@ -24,8 +24,8 @@ pip3 install -r requirements.txt
 ```
 4. Ensures `main.py` is owned by `root` and not editable by other users.
 ```bash
-chmod 644 -R /root/NotFirewall/main.py
-chown root:root -R /root/NotFirewall/main.py
+chmod 644 -R /root/NotFirewall/
+chown root:root -R /root/NotFirewall/
 ```
 5. Change the `ufw_rule_url` in `main.py` to your rule's url.
 6. Add `python3 /root/NotFirewall/main.py` to your crontab with execution frequency you like.

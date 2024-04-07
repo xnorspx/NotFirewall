@@ -26,6 +26,7 @@ pip3 install -r requirements.txt
 ```bash
 chmod 644 -R /root/NotFirewall/
 chown root:root -R /root/NotFirewall/
+chmod u+x /root/NotFirewall/update.sh
 ```
 5. Change the `ufw_rule_url` in `main.py` to your rule's url.
 6. Add `python3 /root/NotFirewall/main.py` to your crontab with execution frequency you like.
@@ -60,5 +61,5 @@ TCP-19999: 192.168.1.0/24
 I personally use crontab to run the script periodically.
 ```
 # NotFirewall
-*/5 * * * * source /root/NotFirewall/venv/bin/activate && python3 /root/NotFirewall/main.py > /dev/null
+*/5 * * * * /root/NotFirewall/update.sh > /dev/null
 ```

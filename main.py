@@ -5,7 +5,7 @@ import os
 """
 Config
 """
-ufw_rule_url = "https://raw.githubusercontent.com/tszykl05/NotFirewall/main/config/vm.txt"
+ufw_rule_url = "https://raw.githubusercontent.com/xnorspx/NotFirewall/main/config/vm.txt"
 ufw_rule_comment_keyword = "NotFirewall"
 
 """

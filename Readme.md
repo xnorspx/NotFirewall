@@ -13,7 +13,7 @@ apt install python3-pip python3-venv git ufw
 ```
 2. Clone this repo to your `root` account's home directory.
 ```bash
-git clone https://github.com/tszykl05/NotFirewall.git /root/NotFirewall
+git clone https://github.com/xnorspx/NotFirewall.git /root/NotFirewall
 ```
 3. Create venv and install dependent package.
 ```bash

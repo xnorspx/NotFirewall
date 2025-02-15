@@ -61,5 +61,5 @@ TCP-19999: 192.168.1.0/24
 I personally use crontab to run the script periodically.
 ```
 # NotFirewall
-*/5 * * * * /root/NotFirewall/update.sh > /dev/null
+* * * * * bash /root/NotFirewall/update.sh > /dev/null 2>&1
 ```
